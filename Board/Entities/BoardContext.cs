@@ -57,18 +57,23 @@ namespace Board.Entities
                 .HasForeignKey(x => x.StateId);
             });
 
-            modelBuilder.Entity<Epic>(entityBuilder =>
-                entityBuilder.Property(x => x.EndDate).HasPrecision(3)
-            );
+            modelBuilder.Entity<Epic>()
+                .Property(x => x.EndDate)
+                .HasPrecision(3);
+            
 
-            modelBuilder.Entity<Issue>(entityBuilder =>
-            entityBuilder.Property(x => x.Efford).HasColumnType("decimal(5,2)"));
+            modelBuilder.Entity<Issue>()
+                .Property(x => x.Efford)
+                .HasColumnType("decimal(5,2)");
 
-            modelBuilder.Entity<Task>(entityBuilder =>
-            {
-                entityBuilder.Property(x => x.Activity).HasMaxLength(200);
-                entityBuilder.Property(x => x.RemaningWork).HasPrecision(14, 2);
-            });
+            modelBuilder.Entity<Task>()
+                .Property(x => x.Activity)
+                .HasMaxLength(200);
+                
+            modelBuilder.Entity<Task>()
+                .Property(x => x.RemaningWork)
+                .HasPrecision(14, 2);
+            
 
             modelBuilder.Entity<Comment>(entityBuilder =>
             {
