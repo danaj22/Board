@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Board.Entities
 {
@@ -11,18 +12,17 @@ namespace Board.Entities
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<Epic> Epics { get; set; }
+        public DbSet<Issue> Issues { get; set; }
+        public DbSet<Task> Tasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<WorkItem>(entityBuilder =>
             {
-                entityBuilder.Property(x => x.State).IsRequired();
                 entityBuilder.Property(x => x.Area).HasColumnType("varchar(200)");
                 entityBuilder.Property(x => x.IterationPath).HasColumnName("Iteration_Path");
-                entityBuilder.Property(x => x.Efford).HasColumnType("decimal(5,2)");
-                entityBuilder.Property(x => x.Activity).HasMaxLength(200);
-                entityBuilder.Property(x => x.RemaningWork).HasPrecision(14, 2);
-                entityBuilder.Property(x => x.EndDate).HasPrecision(3);
 
                 entityBuilder.Property(x => x.Priority).HasDefaultValue(1);
 
@@ -52,7 +52,22 @@ namespace Board.Entities
 
                         });
 
+                entityBuilder.HasOne(x => x.State)
+                .WithMany(x => x.WorkItems)
+                .HasForeignKey(x => x.StateId);
+            });
 
+            modelBuilder.Entity<Epic>(entityBuilder =>
+                entityBuilder.Property(x => x.EndDate).HasPrecision(3)
+            );
+
+            modelBuilder.Entity<Issue>(entityBuilder =>
+            entityBuilder.Property(x => x.Efford).HasColumnType("decimal(5,2)"));
+
+            modelBuilder.Entity<Task>(entityBuilder =>
+            {
+                entityBuilder.Property(x => x.Activity).HasMaxLength(200);
+                entityBuilder.Property(x => x.RemaningWork).HasPrecision(14, 2);
             });
 
             modelBuilder.Entity<Comment>(entityBuilder =>
@@ -67,7 +82,7 @@ namespace Board.Entities
                 .WithOne(x => x.User)
                 .HasForeignKey<Address>(x => x.UserId);
 
-            modelBuilder.Entity<WorkItem>();
+            modelBuilder.Entity<State>().Property(x => x.Value).HasMaxLength(50).IsRequired();
 
         }
     }
