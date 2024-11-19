@@ -87,7 +87,10 @@ namespace Board.Entities
                 .WithOne(x => x.User)
                 .HasForeignKey<Address>(x => x.UserId);
 
-            modelBuilder.Entity<State>().Property(x => x.Value).HasMaxLength(50).IsRequired();
+            modelBuilder.Entity<State>()
+                .Property(x => x.Value)
+                .HasMaxLength(60)
+                .IsRequired();
 
         }
     }
