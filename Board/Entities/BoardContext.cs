@@ -79,7 +79,10 @@ namespace Board.Entities
             {
                 entityBuilder.Property(x => x.CreatedDate).HasDefaultValueSql("getutcdate()");
                 entityBuilder.Property(x => x.ModifiedDate).ValueGeneratedOnUpdate();
-
+                entityBuilder.HasOne(x => x.Author)
+                    .WithMany(x => x.Comments)
+                    .HasForeignKey(x => x.AuthorId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<User>()
@@ -91,6 +94,11 @@ namespace Board.Entities
                 .Property(x => x.Value)
                 .HasMaxLength(60)
                 .IsRequired();
+
+            modelBuilder.Entity<State>().HasData(
+                new State { Id = 1, Value = "To Do" }, 
+                new State { Id = 2, Value = "Doing" }, 
+                new State { Id = 3, Value = "Done" });
 
         }
     }
