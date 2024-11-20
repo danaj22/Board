@@ -1,5 +1,7 @@
 ﻿using Board.Entities;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddDbContext<BoardContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BoardDbConnectionString")));
 
@@ -72,13 +74,47 @@ if (!tags.Any())
     dbContext.SaveChanges();
 }
 
-app.MapGet("/tags", async (BoardContext db) => 
+app.MapGet("/data", async (BoardContext db) => 
 {
-    var epics = await db.Epics.Where(x => x.StateId == 4).OrderBy(x => x.Priority).ToListAsync();
-    //refactor this...
-    var user = await db.Comments.GroupBy(x => x.AuthorId).Select(g => new { key = g.Key, count = g.Count() }).OrderByDescending(x => x.count).Take(1).FirstAsync();
-    var users = await db.Users.FirstAsync(x => x.Id == user.key);
-    return new { epics, users };
+    var user = await db.Users
+                        .Include(x => x.Address)
+                        .Include(x => x.Comments)
+                        .FirstAsync(x => x.Id == Guid.Parse("5cb27c3f-32d9-4474-cbc2-08da10ab0e61"));
+
+
+    return new { user };
+});
+
+app.MapPost("/update", async (BoardContext db) =>
+{
+    var epicToEdit = await db.Epics.FirstAsync(x => x.Id == 1);
+    
+    epicToEdit.StateId = 1;
+
+    await db.SaveChangesAsync();
+
+    return epicToEdit;
+});
+
+app.MapPost("/add", async (BoardContext db) =>
+{
+    var address = new Address { City = "Wrocław", Country = "Polska", Street = "Krótka" };
+    var user = new User { FullName = "Jan Kowalski", Email = "jan.kowalski@gmail.com", Address = address };
+
+    db.Users.Add(user);
+    await db.SaveChangesAsync();
+
+    return   user;
+});
+
+app.MapDelete("/delete", async (BoardContext db) =>
+{
+    var user = await db.Users
+                        .Include(x => x.Comments)
+                        .FirstAsync(x => x.Id == Guid.Parse("C25E6A2C-6B92-423C-CC25-08DA10AB0E61"));
+
+    db.Remove(user);
+    await db.SaveChangesAsync();
 });
        
 app.Run();

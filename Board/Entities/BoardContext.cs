@@ -16,6 +16,7 @@ namespace Board.Entities
         public DbSet<Epic> Epics { get; set; }
         public DbSet<Issue> Issues { get; set; }
         public DbSet<Task> Tasks { get; set; }
+        public DbSet<WorkItemTag> WorkItemTag { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -82,7 +83,7 @@ namespace Board.Entities
                 entityBuilder.HasOne(x => x.Author)
                     .WithMany(x => x.Comments)
                     .HasForeignKey(x => x.AuthorId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.ClientCascade);
             });
 
             modelBuilder.Entity<User>()
