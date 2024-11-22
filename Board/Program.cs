@@ -76,13 +76,9 @@ if (!tags.Any())
 
 app.MapGet("/data", async (BoardContext db) => 
 {
-    var user = await db.Users
-                        .Include(x => x.Address)
-                        .Include(x => x.Comments)
-                        .FirstAsync(x => x.Id == Guid.Parse("5cb27c3f-32d9-4474-cbc2-08da10ab0e61"));
+    var topAuthors = await db.ViewTopAuthors.ToListAsync();
 
-
-    return new { user };
+    return new { topAuthors };
 });
 
 app.MapPost("/update", async (BoardContext db) =>

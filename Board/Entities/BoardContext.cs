@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Board.Entities.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Board.Entities
@@ -17,6 +18,7 @@ namespace Board.Entities
         public DbSet<Issue> Issues { get; set; }
         public DbSet<Task> Tasks { get; set; }
         public DbSet<WorkItemTag> WorkItemTag { get; set; }
+        public DbSet<TopAuthor> ViewTopAuthors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -101,6 +103,11 @@ namespace Board.Entities
                 new State { Id = 2, Value = "Doing" }, 
                 new State { Id = 3, Value = "Done" });
 
+            modelBuilder.Entity<TopAuthor>(eb =>
+            {
+                eb.ToView("View_TopAuthors");
+                eb.HasNoKey();
+            });
         }
     }
 
