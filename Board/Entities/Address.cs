@@ -1,4 +1,6 @@
-﻿namespace Board.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Board.Entities
 {
     public class Address
     {
@@ -9,5 +11,12 @@
         public string PostalCode { get; set; }
         public virtual User User { get; set; }
         public Guid UserId { get; set; }
+        public Coordinate Coordinate { get; set; }
+    }
+
+    public class Coordinate
+    {
+        public decimal? Longitude { get; set; }
+        public decimal? Latitude { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using Board.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Board.Migrations
 {
     [DbContext(typeof(BoardContext))]
-    partial class BoardContextModelSnapshot : ModelSnapshot
+    [Migration("20241122143733_AddCoordinatesToAddress")]
+    partial class AddCoordinatesToAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,7 +51,7 @@ namespace Board.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("Board.Entities.Comment", b =>
@@ -83,7 +86,7 @@ namespace Board.Migrations
 
                     b.HasIndex("WorkItemId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Board.Entities.State", b =>
@@ -101,7 +104,7 @@ namespace Board.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("States", (string)null);
+                    b.ToTable("States");
 
                     b.HasData(
                         new
@@ -134,7 +137,7 @@ namespace Board.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags", (string)null);
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Board.Entities.User", b =>
@@ -151,7 +154,7 @@ namespace Board.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Board.Entities.ViewModels.TopAuthor", b =>
@@ -204,7 +207,7 @@ namespace Board.Migrations
 
                     b.HasIndex("StateId");
 
-                    b.ToTable("WorkItems", (string)null);
+                    b.ToTable("WorkItems");
 
                     b.HasDiscriminator().HasValue("WorkItem");
 
@@ -228,7 +231,7 @@ namespace Board.Migrations
 
                     b.HasIndex("WorkItemId");
 
-                    b.ToTable("WorkItemTag", (string)null);
+                    b.ToTable("WorkItemTag");
                 });
 
             modelBuilder.Entity("Board.Entities.Epic", b =>
@@ -278,7 +281,7 @@ namespace Board.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Board.Entities.Address.Coordinate#Board.Entities.Coordinate", "Coordinate", b1 =>
+                    b.OwnsOne("Board.Entities.Coordinate", "Coordinate", b1 =>
                         {
                             b1.Property<Guid>("AddressId")
                                 .HasColumnType("uniqueidentifier");
@@ -293,7 +296,7 @@ namespace Board.Migrations
 
                             b1.HasKey("AddressId");
 
-                            b1.ToTable("Addresses", (string)null);
+                            b1.ToTable("Addresses");
 
                             b1.WithOwner()
                                 .HasForeignKey("AddressId");
